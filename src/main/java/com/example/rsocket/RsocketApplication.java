@@ -1,16 +1,13 @@
 package com.example.rsocket;
 
 
+import java.time.Duration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.stream.Stream;
+import reactor.core.publisher.Mono;
 
 @SpringBootApplication
 public class RsocketApplication {
@@ -25,18 +22,18 @@ public class RsocketApplication {
 class GreetingsController {
 
     @SubscriptionMapping
-    Flux<Greeting> greetings() {
-        return Flux
-                .fromStream(Stream.generate(() -> new Greeting("Hello, world @ " + Instant.now() + "!")))
+    Flux<String> greetings() {
+        /**return Flux
+                .fromStream(Stream.generate(() -> new Greeting("Hello, world @ " + Instant.now() + "!").toString()))
                 .delayElements(Duration.ofSeconds(1))
-                .take(10);
+                .take(10); **/
+
+        return Mono.delay(Duration.ofMillis(50))
+            .flatMapMany(aLong -> Flux.just("Hi!", "Bonjour!", "Hola!", "Ciao!", "Zdravo!"));
     }
 
-    @QueryMapping
+   /** @QueryMapping
     Greeting greeting() {
         return new Greeting("Hello, world!");
-    }
-}
-
-record Greeting(String greeting) {
+    } **/
 }
